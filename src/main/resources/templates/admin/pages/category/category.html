@@ -1,6 +1,6 @@
 <html lang="en"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="admin/layout/app">
+      layout:decorate="admin/layout/app" xmlns:th="http://www.thymeleaf.org">
 <div class="container-fluid"  layout:fragment="content" >
 
     <!-- Row start -->
@@ -29,7 +29,7 @@
                             Cancel
                         </button>
                         <button type="submit" class="btn btn-success">
-                            Submit
+                            Add
                         </button>
                     </div>
                 </div>
@@ -38,10 +38,66 @@
     </div>
     </form>
     <!-- Row end -->
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="card-title">Projects</h4>
+            </div>
+            <div class="card-body">
+                <div class="border border-dark rounded-3">
+                    <table class="table align-middle table-hover m-0">
+                        <thead>
+                        <tr >
+                            <th scope="col">SL</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Action</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category, index : ${categories}">
+
+                            <td th:text="${index.index+1}">Index</td>
+                            <td th:text="${category.getName()}">Category Name</td>
+
+                            <td>
+<!--                                <a href="#" class="btn btn-danger btn-icon btn-sm mb-1 delete-category" data-category-id="${category.id}">-->
+<!--                                    <i class="bi bi-trash"></i>-->
+<!--                                </a>-->
+                                <a class="btn btn-danger btn-icon btn-sm mb-1"
+                                   th:href="@{delete-category/{id}(id=${category.getId()})}"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-
-
+    <script>
+        document.querySelectorAll('.delete-category').forEach(item => {
+            item.addEventListener('click', function(event) {
+                event.preventDefault();
+                const categoryId = this.getAttribute('data-category-id');
+                fetch(`/delete-category/${categoryId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = '/add-category'; // Redirect upon successful deletion
+                        } else {
+                            console.error('Error deleting category:', response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting category:', error);
+                    });
+            });
+        });
+    </script>
 
 </div>
 </html>
